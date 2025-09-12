@@ -8,6 +8,8 @@ from datetime import date
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
+from email.mime.text import MIMEText
+import base64
 import os
 
 # -----------------------------
@@ -27,7 +29,6 @@ def get_news(sources, limit=3):
 def get_emails(limit=3):
     SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 
-    # Se token.json não existir, cria automaticamente
     if not os.path.exists("token.json"):
         if not os.path.exists("credentials.json"):
             print("❌ credentials.json não encontrado. Gere no Google Cloud Console.")
@@ -52,7 +53,7 @@ def get_emails(limit=3):
     return email_list
 
 # -----------------------------
-# Função: Agente de Resumo Diário
+# Função: Criar o resumo diário
 # -----------------------------
 def agente_resumo_diario():
     fontes = {
@@ -81,7 +82,7 @@ def agente_resumo_diario():
         resumo += f"- [ ] {item}\n"
     resumo += "\n"
 
-    # Pendências detectadas (exemplo)
+    # Pendências
     resumo += "📌 Pendências identificadas\n"
     resumo += "- [ ] Criar apresentação para reunião de sexta.\n"
     resumo += "- [ ] Revisar gastos da semana no financeiro.\n"
@@ -89,7 +90,39 @@ def agente_resumo_diario():
     return resumo
 
 # -----------------------------
+# Função: Enviar e-mail via Gmail API
+# -----------------------------
+def enviar_email(destinatario, assunto, corpo):
+    SCOPES = ['https://www.googleapis.com/auth/gmail.send']
+
+    if not os.path.exists("token.json"):
+        print("❌ token.json não encontrado para enviar e-mail. Gere usando OAuth.")
+        return
+
+    creds = Credentials.from_authorized_user_file("token.json", SCOPES)
+    service = build("gmail", "v1", credentials=creds)
+
+    # Criar a mensagem MIME
+    mensagem = MIMEText(corpo)
+    mensagem['to'] = destinatario
+    mensagem['from'] = destinatario
+    mensagem['subject'] = assunto
+
+    # Codificar mensagem em base64
+    raw = base64.urlsafe_b64encode(mensagem.as_bytes()).decode()
+    body = {'raw': raw}
+
+    # Enviar
+    service.users().messages().send(userId="me", body=body).execute()
+    print(f"✅ E-mail enviado para {destinatario} com sucesso!")
+
+# -----------------------------
 # Execução
 # -----------------------------
 if __name__ == "__main__":
-    print(agente_resumo_diario())
+    resumo = agente_resumo_diario()
+    print(resumo)
+
+    # Enviar para você mesmo
+    meu_email = "seu_email@gmail.com"  # substitua pelo seu e-mail
+    enviar_email(meu_email, f"Resumo Diário – {date.today().strftime('%d/%m/%Y')}", resumo)
