@@ -6,7 +6,8 @@ Este projeto Python cria um agente automatizado que gera um resumo diário perso
 
 * **Notícias de Fontes RSS**: Captura e lista as manchetes mais recentes de sites de notícias como G1, Diário do Nordeste e outros. As fontes são facilmente configuráveis no código.  
 * **Resumo de E-mails**: Conecta-se à sua conta do Gmail para pegar os snippets (trechos) dos e-mails mais recentes.  
-* **Lista de Tarefas**: O resumo é gerado com checkboxes para que você possa acompanhar visualmente as notícias e e-mails que já revisou.
+* **Lista de Tarefas**: O resumo é gerado com checkboxes para que você possa acompanhar visualmente as notícias e e-mails que já revisou.  
+* **Envio Automático por E-mail**: A ferramenta agora pode enviar o resumo diário diretamente para a sua caixa de entrada, facilitando o acesso ao conteúdo.
 
 ## **Como Usar**
 
@@ -18,7 +19,7 @@ pip install feedparser google-api-python-client google-auth-httplib2 google-auth
 
 ### **2\. Configuração do Gmail API**
 
-Para que o script acesse seus e-mails, você precisa de um arquivo de credenciais do Google Cloud.
+Para que o script acesse seus e-mails (para ler e enviar), você precisa de um arquivo de credenciais do Google Cloud.
 
 1. Vá para o [Google Cloud Console](https://console.cloud.google.com/).  
 2. Crie um novo projeto (ou selecione um existente).  
@@ -37,14 +38,15 @@ Após instalar as dependências e configurar o credentials.json, basta rodar o s
 
 python resumo\_diario.py
 
-O resumo diário será impresso diretamente no seu terminal.
+O resumo diário será impresso no seu terminal e, se você configurar a função de envio, também será enviado para o e-mail que você definiu.
 
 ## **Personalização**
 
 Você pode facilmente personalizar o agente:
 
 * **Fontes de notícias**: Edite o dicionário fontes na função agente\_resumo\_diario() para adicionar ou remover fontes RSS.  
-* **Número de itens**: Altere o valor do argumento limit nas funções get\_news() e get\_emails() para pegar mais ou menos notícias/e-mails.
+* **Número de itens**: Altere o valor do argumento limit nas funções get\_news() e get\_emails() para pegar mais ou menos notícias/e-mails.  
+* **E-mail de destino**: Dentro da função agente\_resumo\_diario(), localize a linha meu\_email \= "seu\_email@gmail.com" e substitua pelo seu endereço de e-mail.
 
 ## **Estrutura do Projeto**
 
