@@ -1,55 +1,68 @@
-# **Resumo Diário **
+# **🤖 Agente Resumo Diário**
 
-Este projeto Python cria um agente automatizado que gera um resumo diário personalizado. Ele coleta as últimas notícias de várias fontes (agora incluindo sites que não têm RSS) e os trechos mais recentes dos seus e-mails do Gmail.
+### **Seu assistente pessoal para uma rotina mais informada.**
 
-## **Funcionalidades**
+\<p align="center"\>  
+\<img src="https://www.google.com/search?q=https://via.placeholder.com/800x400.png%3Ftext%3DInsira%2Baqui%2Bum%2BGIF%2Bou%2Bimagem%2Bdo%2Bagente%2Bem%2Ba%25C3%25A7%25C3%25A3o" alt="Demonstração do Agente Resumo Diário"\>  
+\</p\>
 
-* **Notícias de Fontes Variadas**: Captura manchetes tanto de fontes RSS quanto por meio de web scraping em sites populares como O Povo e Diário do Nordeste.  
-* **Resumo de E-mails**: Conecta-se à sua conta do Gmail para pegar os snippets (trechos) dos e-mails mais recentes.  
-* **Lista de Tarefas**: O resumo é gerado com checkboxes para que você possa acompanhar visualmente as notícias e e-mails que já revisou.  
-* **Envio Automático por E-mail**: A ferramenta pode enviar o resumo diário diretamente para a sua caixa de entrada, facilitando o acesso ao conteúdo.
+## **📋 Sobre o Projeto**
 
-## **Como Usar**
+Este projeto em Python cria um **agente de IA** que automatiza a geração de um resumo diário personalizado. Ele atua como um assistente inteligente, consolidando as informações mais relevantes do seu dia em um formato conciso e prático, enviado diretamente para o seu e-mail.
 
-### **1\. Instalação das dependências**
+## **✨ Funcionalidades**
 
-Certifique-se de que você tem o Python instalado e então instale as bibliotecas necessárias usando o pip:
+* **Notícias de Fontes Diversas**: 📰 Captura as manchetes mais recentes de portais de notícias como G1, O Povo e Diário do Nordeste, utilizando tanto feeds RSS quanto web scraping.  
+* **Resumo de E-mails**: 📧 Conecta-se à sua conta do Gmail para extrair os trechos dos e-mails mais recentes, ajudando você a se manter atualizado.  
+* **Lista de Pendências**: ✅ O resumo é gerado com checkboxes para que você possa acompanhar visualmente o que já revisou.  
+* **Envio Automático por E-mail**: 🚀 O resumo diário é enviado para sua caixa de entrada, garantindo que as informações estejam sempre à mão.
+
+## **🚀 Como Usar**
+
+### **1\. Instalação**
+
+Primeiro, clone o repositório e navegue até a pasta do projeto.
+
+git clone \[https://github.com/seu-usuario/ResumoDiario.git\](https://github.com/seu-usuario/ResumoDiario.git)  
+cd ResumoDiario
+
+Em seguida, instale todas as bibliotecas necessárias:
 
 pip install feedparser google-api-python-client google-auth-httplib2 google-auth-oauthlib requests beautifulsoup4
 
 ### **2\. Configuração do Gmail API**
 
-Para que o script acesse seus e-mails (para ler e enviar), você precisa de um arquivo de credenciais do Google Cloud.
+Para que o script acesse seus e-mails e possa enviá-los, é necessário um arquivo de credenciais do Google. Siga estes passos:
 
-1. Vá para o [Google Cloud Console](https://console.cloud.google.com/).  
-2. Crie um novo projeto (ou selecione um existente).  
+1. Acesse o [Google Cloud Console](https://console.cloud.google.com/).  
+2. Crie ou selecione um projeto.  
 3. Vá em **APIs e Serviços** \> **Credenciais**.  
 4. Clique em **Criar credenciais** e selecione **ID do cliente OAuth**.  
-5. Configure a tela de consentimento OAuth, se ainda não o fez.  
-6. Escolha o tipo de aplicativo "Desktop app".  
-7. Baixe o arquivo JSON gerado e renomeie-o para credentials.json.  
-8. Coloque o arquivo credentials.json na mesma pasta do seu script.
+5. Configure a tela de consentimento OAuth e escolha "Desktop app" como tipo de aplicativo.  
+6. Baixe o arquivo JSON e salve-o como credentials.json na mesma pasta do seu script.
 
-A primeira vez que você executar o script, ele abrirá uma janela do navegador para que você autorize o acesso à sua conta do Gmail. Um arquivo token.json será gerado automaticamente para futuras execuções.
+Na primeira execução, uma janela do navegador se abrirá para que você autorize o acesso à sua conta. Um arquivo token.json será gerado automaticamente.
 
-### **3\. Execução do Script**
+### **3\. Execução**
 
-Após instalar as dependências e configurar o credentials.json, basta rodar o script a partir do terminal:
+Depois de instalar as dependências e configurar as credenciais, execute o script:
 
 python seu\_script.py
 
-O resumo diário será impresso no seu terminal e, se você configurar a função de envio, também será enviado para o e-mail que você definiu.
+O resumo será exibido no terminal e enviado para o e-mail que você definiu no código.
 
-## **Personalização**
+## **🛠️ Personalização**
 
-Você pode facilmente personalizar o agente:
+Este agente foi feito para ser adaptável\! Você pode facilmente ajustá-lo para suas necessidades:
 
-* **Fontes de notícias**: Edite os dicionários fontes\_rss e noticias\_scraping na função agente\_resumo\_diario() para adicionar ou remover fontes.  
-* **Número de itens**: Altere o valor do argumento limit nas funções get\_news\_rss(), get\_headlines\_diario\_do\_nordeste() e get\_headlines\_o\_povo() para pegar mais ou menos notícias/e-mails.  
-* **E-mail de destino**: Dentro da função \_\_main\_\_, localize a linha meu\_email \= "seu\_email@gmail.com" e substitua pelo seu endereço de e-mail.
+* **Fontes de notícias**: Edite as variáveis fontes\_rss e noticias\_scraping para adicionar ou remover suas fontes preferidas.  
+* **Número de itens**: Altere o parâmetro limit nas funções de coleta para definir quantos itens (notícias ou e-mails) você quer no resumo.  
+* **E-mail de destino**: Substitua "seu\_email@gmail.com" no código pelo seu próprio endereço de e-mail.
 
-## **Estrutura do Projeto**
+## **🤝 Contribuição**
 
-seu\_script.py  
-credentials.json  
-token.json (gerado automaticamente na primeira execução)  
+Contribuições são bem-vindas\! Se você tiver ideias para novas funcionalidades ou melhorias, sinta-se à vontade para abrir uma *issue* ou enviar um *pull request*.
+
+## **📜 Licença**
+
+Este projeto está sob a licença MIT. Para mais detalhes, consulte o arquivo LICENSE.
