@@ -2,10 +2,6 @@
 
 ### **Seu assistente pessoal para uma rotina mais informada.**
 
-\<p align="center"\>  
-\<img src="https://www.google.com/search?q=https://via.placeholder.com/800x400.png%3Ftext%3DInsira%2Baqui%2Bum%2BGIF%2Bou%2Bimagem%2Bdo%2Bagente%2Bem%2Ba%25C3%25A7%25C3%25A3o" alt="Demonstração do Agente Resumo Diário"\>  
-\</p\>
-
 ## **📋 Sobre o Projeto**
 
 Este projeto em Python cria um **agente de IA** que automatiza a geração de um resumo diário personalizado. Ele atua como um assistente inteligente, consolidando as informações mais relevantes do seu dia em um formato conciso e prático, enviado diretamente para o seu e-mail.

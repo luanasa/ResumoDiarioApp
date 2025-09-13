@@ -40,37 +40,49 @@ def get_credentials():
     return creds
 
 # -----------------------------
-# Função: Capturar notícias via RSS
+# Função: Capturar notícias via RSS com links
 # -----------------------------
 def get_news_rss(sources, limit=5):
     noticias = {}
     for nome, url in sources.items():
         feed = feedparser.parse(url)
-        manchetes = [entry.title for entry in feed.entries[:limit]]
+        manchetes = []
+        for entry in feed.entries[:limit]:
+            link = entry.link
+            title = entry.title
+            manchetes.append((title, link))
         noticias[nome] = manchetes
     return noticias
 
 # -----------------------------
-# Função: Scraping para sites sem RSS
+# Função: Scraping para sites sem RSS com links
 # -----------------------------
 def get_headlines_diario_do_nordeste(limit=5):
     url = "https://diariodonordeste.verdesmares.com.br/"
     resp = requests.get(url)
     soup = BeautifulSoup(resp.text, "html.parser")
-    headlines = [h.get_text(strip=True) for h in soup.find_all("h2")[:limit]]
+    headlines = []
+    for h in soup.find_all("h2")[:limit]:
+        a_tag = h.find("a")
+        if a_tag:
+            headlines.append((a_tag.get_text(strip=True), a_tag.get("href")))
     return headlines
 
 def get_headlines_o_povo(limit=5):
     url = "https://www.opovo.com.br/"
     resp = requests.get(url)
     soup = BeautifulSoup(resp.text, "html.parser")
-    headlines = [h.get_text(strip=True) for h in soup.find_all("h2")[:limit]]
+    headlines = []
+    for h in soup.find_all("h2")[:limit]:
+        a_tag = h.find("a")
+        if a_tag:
+            headlines.append((a_tag.get_text(strip=True), a_tag.get("href")))
     return headlines
 
 # -----------------------------
 # Função: Capturar e-mails via Gmail API
 # -----------------------------
-def get_emails(creds, limit=3):
+def get_emails(creds, limit=10):
     service = build("gmail", "v1", credentials=creds)
     results = service.users().messages().list(userId="me", maxResults=limit).execute()
     messages = results.get("messages", [])
@@ -83,7 +95,19 @@ def get_emails(creds, limit=3):
     return email_list
 
 # -----------------------------
-# Função: Criar o resumo diário
+# Função: Detectar pendências nos e-mails
+# -----------------------------
+def detectar_pendencias(emails):
+    pendencias = []
+    palavras_chave = ["pendência", "tarefa", "prazo", "entregar", "agendar", "reunião", "revisar", "atualizar"]
+    for email in emails:
+        for palavra in palavras_chave:
+            if palavra.lower() in email.lower() and email not in pendencias:
+                pendencias.append(email)
+    return pendencias
+
+# -----------------------------
+# Função: Criar o resumo diário em HTML
 # -----------------------------
 def agente_resumo_diario(creds):
     # RSS
@@ -99,44 +123,50 @@ def agente_resumo_diario(creds):
     }
 
     emails = get_emails(creds)
+    pendencias = detectar_pendencias(emails)
 
-    resumo = f"✅ Resumo Diário – {date.today().strftime('%d/%m/%Y')}\n\n"
+    # HTML do resumo
+    resumo_html = f"<h2>✅ Resumo Diário – {date.today().strftime('%d/%m/%Y')}</h2>"
 
     # Notícias RSS
-    resumo += "📌 Notícias (RSS)\n"
-    for fonte, manchetes in noticias_rss.items():
-        resumo += f"🔹 {fonte}\n"
-        for item in manchetes:
-            resumo += f"- [ ] {item}\n"
-        resumo += "\n"
+    resumo_html += "<h3>📌 Notícias (RSS)</h3>"
+    for fonte, items in noticias_rss.items():
+        resumo_html += f"<b>{fonte}</b><ul>"
+        for title, link in items:
+            resumo_html += f'<li><a href="{link}">{title}</a></li>'
+        resumo_html += "</ul>"
 
     # Notícias Scraping
-    resumo += "📌 Notícias (Websites)\n"
-    for fonte, manchetes in noticias_scraping.items():
-        resumo += f"🔹 {fonte}\n"
-        for item in manchetes:
-            resumo += f"- [ ] {item}\n"
-        resumo += "\n"
+    resumo_html += "<h3>📌 Notícias (Websites)</h3>"
+    for fonte, items in noticias_scraping.items():
+        resumo_html += f"<b>{fonte}</b><ul>"
+        for title, link in items:
+            resumo_html += f'<li><a href="{link}">{title}</a></li>'
+        resumo_html += "</ul>"
 
     # E-mails
-    resumo += "📌 E-mails\n"
+    resumo_html += "<h3>📌 E-mails</h3><ul>"
     for item in emails:
-        resumo += f"- [ ] {item}\n"
-    resumo += "\n"
+        resumo_html += f"<li>{item}</li>"
+    resumo_html += "</ul>"
 
-    # Pendências
-    resumo += "📌 Pendências identificadas\n"
-    resumo += "- [ ] Criar apresentação para reunião de sexta.\n"
-    resumo += "- [ ] Revisar gastos da semana no financeiro.\n"
+    # Pendências inteligentes
+    resumo_html += "<h3>📌 Pendências identificadas</h3><ul>"
+    if pendencias:
+        for p in pendencias:
+            resumo_html += f"<li>{p}</li>"
+    else:
+        resumo_html += "<li>Sem pendências detectadas</li>"
+    resumo_html += "</ul>"
 
-    return resumo
+    return resumo_html
 
 # -----------------------------
-# Função: Enviar e-mail via Gmail API
+# Função: Enviar e-mail via Gmail API (HTML)
 # -----------------------------
-def enviar_email(creds, destinatario, assunto, corpo):
+def enviar_email(creds, destinatario, assunto, corpo_html):
     service = build("gmail", "v1", credentials=creds)
-    mensagem = MIMEText(corpo)
+    mensagem = MIMEText(corpo_html, 'html')
     mensagem['to'] = destinatario
     mensagem['from'] = destinatario
     mensagem['subject'] = assunto
@@ -153,9 +183,9 @@ def enviar_email(creds, destinatario, assunto, corpo):
 if __name__ == "__main__":
     creds = get_credentials()
     if creds:
-        resumo = agente_resumo_diario(creds)
-        print(resumo)
+        resumo_html = agente_resumo_diario(creds)
+        print(resumo_html)
 
         # Enviar para você mesmo
-        meu_email = "seu_email@gmail.com"  # substitua pelo seu e-mail
-        enviar_email(creds, meu_email, f"Resumo Diário – {date.today().strftime('%d/%m/%Y')}", resumo)
+        meu_email = "seuemail@gmail.com"  # substitua pelo seu e-mail
+        enviar_email(creds, meu_email, f"Resumo Diário – {date.today().strftime('%d/%m/%Y')}", resumo_html)
