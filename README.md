@@ -2,7 +2,7 @@
 
 ### **Seu assistente pessoal para uma rotina mais informada.**
 
-## **📋 Sobre o Projeto**
+## **-> Sobre o Projeto**
 
 Este projeto em Python cria um **agente de IA** que automatiza a geração de um resumo diário personalizado. Ele atua como um assistente inteligente, consolidando as informações mais relevantes do seu dia em um formato conciso e prático, enviado diretamente para o seu e-mail.
 
@@ -13,7 +13,7 @@ Este projeto em Python cria um **agente de IA** que automatiza a geração de um
 * **Lista de Pendências**: ✅ O resumo é gerado com checkboxes para que você possa acompanhar visualmente o que já revisou.  
 * **Envio Automático por E-mail**: 🚀 O resumo diário é enviado para sua caixa de entrada, garantindo que as informações estejam sempre à mão.
 
-## **🚀 Como Usar**
+## **-> Como Usar**
 
 ### **1\. Instalação**
 
