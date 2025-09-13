@@ -1,4 +1,4 @@
-# **Resumo Diário**
+# **Resumo Diário **
 
 Este projeto Python cria um agente automatizado que gera um resumo diário personalizado. Ele coleta as últimas notícias de várias fontes (agora incluindo sites que não têm RSS) e os trechos mais recentes dos seus e-mails do Gmail.
 
